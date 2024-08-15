@@ -5058,6 +5058,291 @@ impl<'nvml> Device<'nvml> {
     pub fn link_wrapper_for(&self, link: u32) -> NvLink {
         NvLink { device: self, link }
     }
+
+    // Conf Compute Operations
+
+    /**
+    Get Conf Computing Gpu certificate details.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if `Device` is invalid or memory is NULL
+    * `NotSupported`, if this query is not supported by the device
+    * `Unknown`, on any unexpected error
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn get_cc_gpu_cert(&mut self) -> Result<nvmlConfComputeGpuCertificate_t, NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlDeviceGetConfComputeGpuCertificate
+                .as_ref(),
+        )?;
+
+        unsafe {
+            let mut gpu_cert: nvmlConfComputeGpuCertificate_t = mem::zeroed();
+            nvml_try(sym(self.device, &mut gpu_cert))?;
+
+            Ok(gpu_cert)
+        }
+    }
+
+    /**
+    Get Conf Computing Gpu attestation report.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if `Device` is invalid or memory is NULL
+    * `NotSupported`, if this query is not supported by the device
+    * `Unknown`, on any unexpected error
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn get_cc_gpu_attestation_report(
+        &mut self,
+    ) -> Result<nvmlConfComputeGpuAttestationReport_t, NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlDeviceGetConfComputeGpuAttestationReport
+                .as_ref(),
+        )?;
+
+        unsafe {
+            let mut report: nvmlConfComputeGpuAttestationReport_t = mem::zeroed();
+            nvml_try(sym(self.device, &mut report))?;
+
+            Ok(report)
+        }
+    }
+
+    /**
+    Get Conf Computing Protected and Unprotected Memory Sizes.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if `memInfo` or `Device` is invalid
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn get_cc_memsize_info(&mut self) -> Result<nvmlConfComputeMemSizeInfo_t, NvmlError> {
+        let sym = nvml_sym(self.nvml.lib.nvmlDeviceGetConfComputeMemSizeInfo.as_ref())?;
+
+        unsafe {
+            let mut mem_info: nvmlConfComputeMemSizeInfo_t = mem::zeroed();
+            nvml_try(sym(self.device, &mut mem_info))?;
+
+            Ok(mem_info)
+        }
+    }
+
+    /**
+    Get Conf Computing protected memory usage.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if  `Device` is invalid or memory is NULL
+    * `NotSupported`, if this query is not supported by the device
+    * `Unknown`, on any unexpected error
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn get_cc_protected_mem_usage(&mut self) -> Result<nvmlMemory_t, NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlDeviceGetConfComputeProtectedMemoryUsage
+                .as_ref(),
+        )?;
+
+        unsafe {
+            let mut mem_usage: nvmlMemory_t = mem::zeroed();
+            nvml_try(sym(self.device, &mut mem_usage))?;
+
+            Ok(mem_usage)
+        }
+    }
+
+    /**
+    Set Conf Computing Unprotected Memory Size.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if  `Device` is invalid
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn set_cc_unprotected_memsize(&mut self, mem_size: u64) -> Result<(), NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlDeviceSetConfComputeUnprotectedMemSize
+                .as_ref(),
+        )?;
+
+        unsafe { nvml_try(sym(self.device, mem_size)) }
+    }
+
+    /**
+    Get Conf Computing System capabilities.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if capabilities is invalid
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn sys_get_cc_capabilities(&mut self) -> Result<nvmlConfComputeSystemCaps_t, NvmlError> {
+        let sym = nvml_sym(self.nvml.lib.nvmlSystemGetConfComputeCapabilities.as_ref())?;
+
+        unsafe {
+            let mut caps: nvmlConfComputeSystemCaps_t = mem::zeroed();
+
+            nvml_try(sym(&mut caps))?;
+            Ok(caps)
+        }
+    }
+
+    /**
+    Get Conf Computing GPUs ready state.
+    Returns GPU current work accepting state:
+     * NVML_CC_ACCEPTING_CLIENT_REQUESTS_TRUE
+     * NVML_CC_ACCEPTING_CLIENT_REQUESTS_FALSE
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if isAcceptingWork is NULL
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn sys_get_cc_readystate(&mut self) -> Result<u32, NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlSystemGetConfComputeGpusReadyState
+                .as_ref(),
+        )?;
+
+        unsafe {
+            let mut is_accepting_work: u32 = mem::zeroed();
+
+            nvml_try(sym(&mut is_accepting_work))?;
+            Ok(is_accepting_work)
+        }
+    }
+
+    /**
+    Get Conf Computing System State.
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if `State` is invalid
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn sys_get_cc_state(&mut self) -> Result<nvmlConfComputeSystemState_t, NvmlError> {
+        let sym = nvml_sym(self.nvml.lib.nvmlSystemGetConfComputeState.as_ref())?;
+
+        unsafe {
+            let mut state: nvmlConfComputeSystemState_t = mem::zeroed();
+
+            nvml_try(sym(&mut state))?;
+            Ok(state)
+        }
+    }
+
+    /**
+    Set Conf Computing GPUs ready state.
+    Input - GPU accepting new work:
+     * NVML_CC_ACCEPTING_CLIENT_REQUESTS_TRUE
+     * NVML_CC_ACCEPTING_CLIENT_REQUESTS_FALSE
+
+    # Errors
+
+    * `Uninitialized`, if the library has not been successfully initialized
+    * `InvalidArgument`, if `isAcceptingWork` is invalid
+    * `NotSupported`, if this query is not supported by the device
+
+    # Device Support
+
+    For Ampere or newer fully supported devices.
+
+    # Platform Support
+
+    Supported on Linux, Windows TCC.
+    */
+    pub fn sys_set_cc_readystate(&mut self, is_accepting_work: u32) -> Result<(), NvmlError> {
+        let sym = nvml_sym(
+            self.nvml
+                .lib
+                .nvmlSystemSetConfComputeGpusReadyState
+                .as_ref(),
+        )?;
+
+        unsafe { nvml_try(sym(is_accepting_work)) }
+    }
 }
 
 #[cfg(test)]
