@@ -5079,7 +5079,7 @@ impl<'nvml> Device<'nvml> {
 
     Supported on Linux, Windows TCC.
     */
-    pub fn get_cc_gpu_cert(&mut self) -> Result<nvmlConfComputeGpuCertificate_t, NvmlError> {
+    pub fn get_cc_gpu_cert(&self) -> Result<nvmlConfComputeGpuCertificate_t, NvmlError> {
         let sym = nvml_sym(
             self.nvml
                 .lib
@@ -5114,7 +5114,8 @@ impl<'nvml> Device<'nvml> {
     Supported on Linux, Windows TCC.
     */
     pub fn get_cc_gpu_attestation_report(
-        &mut self,
+        &self,
+        nonce: &[u8; 32],
     ) -> Result<nvmlConfComputeGpuAttestationReport_t, NvmlError> {
         let sym = nvml_sym(
             self.nvml
@@ -5125,8 +5126,8 @@ impl<'nvml> Device<'nvml> {
 
         unsafe {
             let mut report: nvmlConfComputeGpuAttestationReport_t = mem::zeroed();
+            report.nonce = *nonce;
             nvml_try(sym(self.device, &mut report))?;
-
             Ok(report)
         }
     }

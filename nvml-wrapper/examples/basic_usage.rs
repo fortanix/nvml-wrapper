@@ -83,5 +83,19 @@ fn main() -> Result<(), NvmlError> {
     );
 
     print!("\n\n");
+
+    let nonce: [u8; 32] = [9; 32];
+    let report = device.get_cc_gpu_attestation_report(&nonce)?;
+
+    // the generated report should contain the provided nonce, starting from index 4.
+    let nonce_in_report = &report.attestationReport[4..36];
+    if nonce_in_report != nonce {
+        eprintln!(
+            "nonce does not match. Expected `{nonce:?}` but found found `{nonce_in_report:?}`"
+        )
+    } else {
+        println!("nonce matched!")
+    }
+
     Ok(())
 }
