@@ -78,7 +78,7 @@ Bindings have been regenerated using the NVML 10.1 header and bindgen 0.50.0.
 
 Improvements were made to the build script:
 
-* An attempt will be made to locate the directory containing `libnvidia-ml.so` and it will be automatically added to the locations that the library is being searched for in. Thanks @SunDoge!
+* An attempt will be made to locate the directory containing `libnvidia-ml.so.1` and it will be automatically added to the locations that the library is being searched for in. Thanks @SunDoge!
 * The script will now display a helpful error message if compilation is attempted on macOS.
 
 ## 0.3.0 (released 2017-07-20)

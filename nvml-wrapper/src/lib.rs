@@ -155,7 +155,7 @@ use crate::bitmasks::InitFlags;
 const LIB_PATH: &str = "nvml.dll";
 
 #[cfg(target_os = "linux")]
-const LIB_PATH: &str = "libnvidia-ml.so";
+const LIB_PATH: &str = "libnvidia-ml.so.1";
 
 /// Determines the major version of the CUDA driver given the full version.
 ///
@@ -217,7 +217,7 @@ impl Nvml {
     Note that this will initialize NVML but not any GPUs. This means that NVML can
     communicate with a GPU even when other GPUs in a system are bad or unstable.
 
-    By default, initialization looks for "libnvidia-ml.so" on linux and "nvml.dll"
+    By default, initialization looks for "libnvidia-ml.so.1" on linux and "nvml.dll"
     on Windows. These default names should work for default installs on those
     platforms; if further specification is required, use `Nvml::builder`.
 
@@ -1010,7 +1010,7 @@ Initialize NVML with a non-default path to the shared object file:
 use nvml_wrapper::Nvml;
 use std::ffi::OsStr;
 
-let init_result = Nvml::builder().lib_path(OsStr::new("/some/path/to/libnvidia-ml.so")).init();
+let init_result = Nvml::builder().lib_path(OsStr::new("/some/path/to/libnvidia-ml.so.1")).init();
 ```
 */
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
